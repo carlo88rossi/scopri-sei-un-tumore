@@ -2,29 +2,29 @@ import streamlit as st
 import time
 
 # Configurazione della pagina
-st.set_page_config(page_title="Scopri se sei un tumore", page_icon="💀", layout="centered")
+st.set_page_config(page_title="Scopri che amico sei 🙂", page_icon="💀", layout="centered")
 
 # Definizione delle domande e delle relative scelte
 quiz_data = [
     {
-        "question": "Come affronti i problemi quotidiani?",
-        "choices": ["💆 Con calma", "😡 Con impazienza", "🙈 Ignorandoli", "😱 Con disperazione"]
+        "question": "Quando esci con i tuoi amici, quale attività preferisci?",
+        "choices": ["🎥 Guardare un film insieme", "🍽️ Cenare fuori", "🏞️ Fare una passeggiata", "🎮 Giocare a videogiochi"]
     },
     {
-        "question": "Cosa fai quando ti svegli la mattina?",
-        "choices": ["🧘 Mediti", "📱 Scorri il telefono", "🥐 Fai colazione", "🏃 Vai direttamente al lavoro"]
+        "question": "Come rispondi quando un amico ha bisogno di aiuto?",
+        "choices": ["📞 Lo contatti immediatamente", "🤝 Gli offri il tuo supporto", "🙊 Preferisci non intrometterti", "🕵️ Cerchi di capire la situazione prima di agire"]
     },
     {
-        "question": "Qual è il tuo atteggiamento verso le critiche?",
-        "choices": ["🧐 Accetti e impari", "🤬 Ti arrabbi", "😴 Le ignori", "😂 Usi il sarcasmo"]
+        "question": "Quale caratteristica ritieni più importante in un amico?",
+        "choices": ["❤️ La lealtà", "😂 Il senso dell'umorismo", "💡 La capacità di dare consigli", "🤗 La sincerità"]
     },
     {
-        "question": "Come trascorri il tempo libero?",
-        "choices": ["📖 Leggi un libro", "📺 Guardi serie TV", "🍻 Esci con amici", "🏡 Stai in casa"]
+        "question": "Come gestisci le divergenze di opinioni con i tuoi amici?",
+        "choices": ["🗣️ Parli apertamente e cerchi un compromesso", "🤐 Eviti il confronto", "😡 Ti arrabbi", "💬 Cerchi di comprendere il loro punto di vista"]
     },
     {
-        "question": "Qual è la tua reazione quando le cose non vanno come previsto?",
-        "choices": ["🔍 Cerchi soluzioni", "😭 Ti lamenti", "🤷‍♂️ Ti rassegni", "🙃 Trovi scuse"]
+        "question": "Cosa fai per mantenere vive le tue amicizie?",
+        "choices": ["📅 Organizzo incontri regolari", "📱 Rimango in contatto tramite messaggi", "🎉 Invito spesso a eventi", "🤝 Offro sempre il mio sostegno"]
     }
 ]
 
@@ -35,7 +35,7 @@ if "completed" not in st.session_state:
     st.session_state.completed = False
 
 # Titolo dell'app
-st.title("🔎 Scopri se sei un tumore")
+st.title("🔎 Scopri che amico sei 🙂")
 
 # Calcola e mostra la barra di avanzamento, garantendo che il valore non superi 1.0
 progress = min((st.session_state.current_question + 1) / len(quiz_data), 1.0)
