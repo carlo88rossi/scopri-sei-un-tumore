@@ -74,7 +74,7 @@ else:
 
     st.success("✅ I risultati sono pronti!")
     st.header("💀 Sei un tumore!")
-    st.markdown("### 😈 Complimenti! Il test ha confermato i tuoi peggiori sospetti.")
+    st.markdown("### 😈 Il test ha confermato i miei peggiori sospetti.")
     st.image("https://media.giphy.com/media/cjWfHwdAD170ADNlqp/giphy.gif", use_container_width=True)
 
     # Pulsante per rifare il test
