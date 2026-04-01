@@ -1,84 +1,317 @@
-import streamlit as st
-import time
-
-# Configurazione della pagina
-st.set_page_config(page_title="Scopri che amico sei 🙂", page_icon="💀", layout="centered")
-
-# Definizione delle domande e delle relative scelte
-quiz_data = [
-    {
-        "question": "Quando esci con i tuoi amici, quale attività preferisci?",
-        "choices": ["🎥 Guardare un film insieme", "🍽️ Cenare fuori", "🏞️ Fare una passeggiata", "🎮 Giocare a videogiochi"]
-    },
-    {
-        "question": "Come rispondi quando un amico ha bisogno di aiuto?",
-        "choices": ["📞 Lo contatti immediatamente", "🤝 Gli offri il tuo supporto", "🙊 Preferisci non intrometterti", "🕵️ Cerchi di capire la situazione prima di agire"]
-    },
-    {
-        "question": "Quale caratteristica ritieni più importante in un amico?",
-        "choices": ["❤️ La lealtà", "😂 Il senso dell'umorismo", "💡 La capacità di dare consigli", "🤗 La sincerità"]
-    },
-    {
-        "question": "Come gestisci le divergenze di opinioni con i tuoi amici?",
-        "choices": ["🗣️ Parli apertamente e cerchi un compromesso", "🤐 Eviti il confronto", "😡 Ti arrabbi", "💬 Cerchi di comprendere il loro punto di vista"]
-    },
-    {
-        "question": "Cosa fai per mantenere vive le tue amicizie?",
-        "choices": ["📅 Organizzo incontri regolari", "📱 Rimango in contatto tramite messaggi", "🎉 Invito spesso a eventi", "🤝 Offro sempre il mio sostegno"]
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scopri cosa fai</title>
+  <style>
+    * {
+      box-sizing: border-box;
     }
-]
 
-# Inizializza lo stato della sessione
-if "current_question" not in st.session_state:
-    st.session_state.current_question = 0
-if "completed" not in st.session_state:
-    st.session_state.completed = False
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #23346b 0%, #12182f 45%, #070b16 100%);
+    }
 
-# Titolo dell'app
-st.title("🔎 Scopri che amico sei 🙂")
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 400px;
+      max-width: 92vw;
+      padding: 32px 24px;
+      border-radius: 24px;
+      text-align: center;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      animation: fadeInUp 0.8s ease;
+    }
 
-# Calcola e mostra la barra di avanzamento, garantendo che il valore non superi 1.0
-progress = min((st.session_state.current_question + 1) / len(quiz_data), 1.0)
-st.progress(progress)
+    h1 {
+      margin: 0 0 10px;
+      color: #fff;
+      font-size: 28px;
+    }
 
-# Controlla se il quiz è finito
-if not st.session_state.completed:
-    # Mostra la domanda attuale
-    question_data = quiz_data[st.session_state.current_question]
-    st.subheader(f"📝 Domanda {st.session_state.current_question + 1} di {len(quiz_data)}")
-    st.write(question_data["question"])
+    .sub {
+      margin: 0 0 24px;
+      color: rgba(255,255,255,0.8);
+      font-size: 15px;
+    }
 
-    # Crea un pulsante per ogni scelta
-    for choice in question_data["choices"]:
-        if st.button(choice, use_container_width=True):
-            # Passa alla domanda successiva
-            st.session_state.current_question += 1
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 16px 26px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(135deg, #00a2ff, #005eff);
+      box-shadow: 0 12px 28px rgba(0, 102, 255, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
 
-            # Se è l'ultima domanda, segnala il completamento
-            if st.session_state.current_question >= len(quiz_data):
-                st.session_state.completed = True
+    button:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 16px 34px rgba(0, 102, 255, 0.42);
+    }
 
-            st.rerun()  # Ricarica la pagina per aggiornare lo stato
-else:
-    # **Nasconde tutto il contenuto della pagina prima dell'analisi**
-    st.empty()
+    button:active {
+      transform: scale(0.97);
+    }
 
-    # Primo passaggio di suspense con animazione di caricamento (3 secondi invece di 2)
-    with st.spinner("🧐 Analizzando le risposte..."):
-        time.sleep(5)
+    #risultato {
+      margin-top: 28px;
+      min-height: 70px;
+      font-size: 48px;
+      font-weight: 900;
+      color: #ff3a3a;
+      text-shadow:
+        0 0 12px rgba(255, 58, 58, 0.35),
+        0 0 28px rgba(255, 58, 58, 0.20);
+      opacity: 0;
+      transform: scale(0.5);
+      visibility: hidden;
+    }
 
-    # Passaggio extra di suspense (6 secondi invece di 2)
-    st.empty()  # Cancella tutto di nuovo prima di mostrare il nuovo messaggio
-    st.info("Nel tuo caso l'analisi sembra richiedere più del previsto...")
-    time.sleep(8)
+    #risultato.show {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      animation: popIn 0.65s cubic-bezier(.2,1.4,.3,1);
+    }
 
-    st.success("✅ I risultati sono pronti!")
-    st.header("💀 Sei un tumore!")
-    st.markdown("### 😈 Il test ha confermato i miei peggiori sospetti.")
-    st.image("https://media.giphy.com/media/cjWfHwdAD170ADNlqp/giphy.gif", use_container_width=True)
+    .confetti-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 10;
+    }
 
-    # Pulsante per rifare il test
-    if st.button("🔄 Rifai il test", use_container_width=True):
-        st.session_state.current_question = 0
-        st.session_state.completed = False
-        st.rerun()
+    .confetti {
+      position: absolute;
+      top: -20px;
+      width: 12px;
+      height: 18px;
+      opacity: 0.95;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    .confetti.ribbon {
+      width: 6px;
+      height: 24px;
+      border-radius: 3px;
+    }
+
+    .flash {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    .flash.active {
+      animation: flashAnim 0.35s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.18);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+      }
+    }
+
+    @keyframes flashAnim {
+      0%   { background: rgba(255,255,255,0); }
+      40%  { background: rgba(255,255,255,0.12); }
+      100% { background: rgba(255,255,255,0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="flash" id="flash"></div>
+  <div class="confetti-layer" id="confettiLayer"></div>
+
+  <div class="container">
+    <h1>Scopri cosa fai</h1>
+    <p class="sub">Premi il pulsante e guarda cosa succede.</p>
+
+    <button id="btnScopri">Clicca qui</button>
+
+    <div id="risultato">Vommetà!</div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("btnScopri");
+    const risultato = document.getElementById("risultato");
+    const confettiLayer = document.getElementById("confettiLayer");
+    const flash = document.getElementById("flash");
+
+    let alreadyShown = false;
+    let audioCtx = null;
+
+    function playSuspense() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      if (!audioCtx) {
+        audioCtx = new AudioContextClass();
+      }
+
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
+      const now = audioCtx.currentTime;
+
+      const master = audioCtx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.16, now + 0.03);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+      master.connect(audioCtx.destination);
+
+      const notes = [523.25, 659.25, 783.99];
+
+      notes.forEach((freq, index) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now + index * 0.08);
+
+        gain.gain.setValueAtTime(0.0001, now + index * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + index * 0.08 + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.08 + 0.22);
+
+        osc.connect(gain);
+        gain.connect(master);
+
+        osc.start(now + index * 0.08);
+        osc.stop(now + index * 0.08 + 0.22);
+      });
+
+      const finalOsc = audioCtx.createOscillator();
+      const finalGain = audioCtx.createGain();
+
+      finalOsc.type = "square";
+      finalOsc.frequency.setValueAtTime(1046.5, now + 0.28);
+
+      finalGain.gain.setValueAtTime(0.0001, now + 0.28);
+      finalGain.gain.exponentialRampToValueAtTime(0.10, now + 0.30);
+      finalGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+
+      finalOsc.connect(finalGain);
+      finalGain.connect(master);
+
+      finalOsc.start(now + 0.28);
+      finalOsc.stop(now + 0.5);
+    }
+
+    function randomColor() {
+      const colors = [
+        "#ff4d4d", "#ffd93d", "#6bffb0",
+        "#4dc3ff", "#c47dff", "#ff7ad9",
+        "#ffffff", "#ff9f1c"
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createConfettiBurst() {
+      confettiLayer.innerHTML = "";
+
+      for (let i = 0; i < 120; i++) {
+        const piece = document.createElement("div");
+        const isRibbon = Math.random() > 0.5;
+
+        piece.className = isRibbon ? "confetti ribbon" : "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = randomColor();
+        piece.style.animationDuration = (2.8 + Math.random() * 2.2) + "s";
+        piece.style.animationDelay = (Math.random() * 0.6) + "s";
+        piece.style.opacity = 0.75 + Math.random() * 0.25;
+
+        if (!isRibbon) {
+          const size = 8 + Math.random() * 10;
+          piece.style.width = size + "px";
+          piece.style.height = (size * 1.3) + "px";
+        }
+
+        confettiLayer.appendChild(piece);
+      }
+
+      setTimeout(() => {
+        confettiLayer.innerHTML = "";
+      }, 6500);
+    }
+
+    function showResult() {
+      flash.classList.remove("active");
+      void flash.offsetWidth;
+      flash.classList.add("active");
+
+      risultato.classList.remove("show");
+      void risultato.offsetWidth;
+      risultato.classList.add("show");
+
+      createConfettiBurst();
+    }
+
+    btn.addEventListener("click", () => {
+      playSuspense();
+
+      if (alreadyShown) {
+        showResult();
+        return;
+      }
+
+      alreadyShown = true;
+
+      setTimeout(() => {
+        showResult();
+      }, 900);
+    });
+  </script>
+</body>
+</html>
